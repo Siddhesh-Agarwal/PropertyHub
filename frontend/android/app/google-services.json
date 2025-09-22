@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "647072917735",
+    "project_id": "property-hub-ba1b1",
+    "storage_bucket": "property-hub-ba1b1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:647072917735:android:0e869e4fcce00dd3b95a42",
+        "android_client_info": {
+          "package_name": "com.mycompany.propertyhub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "647072917735-c29e1d9os32e57krgov48i6fvoadr0ir.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIeBeH2nnGe7q8-LxF5EeYvp1UqBKHdYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "647072917735-c29e1d9os32e57krgov48i6fvoadr0ir.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
