@@ -1,4 +1,13 @@
 import z from "zod";
+import {
+  CONTRACT_STATUS_TYPES,
+  FURNISHING_TYPES,
+  GENDER_TYPES,
+  OWNERSHIP_TYPES,
+  PROPERTY_TYPES,
+  ROLE_TYPES,
+  USAGE_TYPES,
+} from "./db/schema";
 
 export const getUserSchema = z.object({
   id: z.coerce.number(),
@@ -7,7 +16,7 @@ export const getUserSchema = z.object({
 export const createUserSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.email(),
-  role: z.enum(["admin", "user"]),
+  role: z.enum(ROLE_TYPES),
 });
 
 export const userSchema = z.object({
@@ -16,16 +25,16 @@ export const userSchema = z.object({
   email: z.email(),
   qatarId: z.string().min(11).max(11),
   dateOfBirth: z.coerce.date(),
-  gender: z.enum(["male", "female"]),
+  gender: z.enum(GENDER_TYPES),
 });
 
 export const propertySchema = z.object({
   address: z.string().min(5).max(100),
   size: z.number().min(1),
-  ownershipType: z.enum(["Owned", "Rented", "Managed"]),
-  propertyType: z.enum(["Villa", "Apartment", "Shop"]),
-  furnishingType: z.enum(["Furnished", "Unfurnished"]),
-  usageType: z.enum(["Residential", "Commercial"]),
+  ownershipType: z.enum(OWNERSHIP_TYPES),
+  propertyType: z.enum(PROPERTY_TYPES),
+  furnishingType: z.enum(FURNISHING_TYPES),
+  usageType: z.enum(USAGE_TYPES),
   imageUrl: z.url().optional(),
 });
 
@@ -45,7 +54,7 @@ export const contractSchema = z.object({
   startDate: z.coerce.date(),
   endDate: z.coerce.date(),
   contract: z.file(),
-  status: z.enum(["Pending", "Active", "Expired", "Cancelled"]),
+  status: z.enum(CONTRACT_STATUS_TYPES),
 });
 
 export const getContractByUserSchema = z.object({

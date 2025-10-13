@@ -1,5 +1,5 @@
-import { env } from "cloudflare:workers";
 import { defineConfig } from "drizzle-kit";
+import { env } from "process";
 
 export default defineConfig({
   dialect: "sqlite",
