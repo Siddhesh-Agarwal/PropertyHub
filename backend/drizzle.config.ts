@@ -1,15 +1,14 @@
+import { env } from "cloudflare:workers";
 import { defineConfig } from "drizzle-kit";
 
-const DB_URL = process.env.DATABASE_URL;
-if (!DB_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
-}
-
 export default defineConfig({
-  dialect: "postgresql",
+  dialect: "sqlite",
+  driver: "d1-http",
   schema: "./src/db/schema.ts",
   out: "./drizzle",
   dbCredentials: {
-    url: DB_URL,
+    accountId: env.D1_ACCOUNT_ID,
+    databaseId: env.D1_DATABASE_ID,
+    token: env.D1_TOKEN,
   },
 });

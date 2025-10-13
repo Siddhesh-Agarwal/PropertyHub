@@ -1,7 +1,7 @@
 import { swaggerUI } from "@hono/swagger-ui";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, gt, lt, or } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/postgres-js";
+import { drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
 import { trimTrailingSlash } from "hono/trailing-slash";
 import { contract, feedback, property, user } from "./db/schema";
@@ -16,12 +16,9 @@ import {
   userSchema,
 } from "./schema";
 import { getStatus, uploadFile } from "./utils";
+import { env } from "cloudflare:workers";
 
-const DB_URL = process.env.DATABASE_URL;
-if (!DB_URL) {
-  throw new Error("DATABASE_URL is not defined");
-}
-const db = drizzle(DB_URL);
+const db = drizzle(env.D1);
 const app = new Hono();
 app.use(trimTrailingSlash());
 

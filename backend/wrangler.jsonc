@@ -4,9 +4,6 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-09-17",
   "compatibility_flags": ["nodejs_compat"],
-  "vars": {
-    "R2_BASE_URL": "https://my-bucket.r2.cloudflarestorage.com",
-  },
   // "kv_namespaces": [
   //   {
   //     "binding": "MY_KV_NAMESPACE",
@@ -19,13 +16,13 @@
       "bucket_name": "my-bucket",
     },
   ],
-  // "d1_databases": [
-  //   {
-  //     "binding": "MY_DB",
-  //     "database_name": "my-database",
-  //     "database_id": ""
-  //   }
-  // ],
+  "d1_databases": [
+    {
+      "binding": "D1",
+      "database_name": "property-hub",
+      "database_id": "f1f3d1f9-38e9-4ea6-8fcd-84964e67e257",
+    },
+  ],
   // "ai": {
   //   "binding": "AI"
   // },

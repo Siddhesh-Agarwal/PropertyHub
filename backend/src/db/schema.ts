@@ -1,82 +1,81 @@
-import {
-  date,
-  doublePrecision,
-  integer,
-  pgEnum,
-  pgTable,
-  serial,
-  text,
-} from "drizzle-orm/pg-core";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const ownershipOptions = pgEnum("OwnershipType", [
-  "Owned",
-  "Rented",
-  "Managed",
-]);
-export const propertyOptions = pgEnum("PropertyType", [
-  "Villa",
-  "Apartment",
-  "Shop",
-]);
-export const furnishingOptions = pgEnum("FurnishingType", [
-  "Furnished",
-  "Unfurnished",
-]);
-export const usageOptions = pgEnum("UsageType", ["Residential", "Commercial"]);
-export const userStatusOptions = pgEnum("StatusType", [
-  "Invited",
-  "Active",
-  "Inactive",
-]);
-export const contractStatusOptions = pgEnum("ContractStatusType", [
+// Enum value constants
+export const OWNERSHIP_TYPES = ["Owned", "Rented", "Managed"] as const;
+export const PROPERTY_TYPES = ["Villa", "Apartment", "Shop"] as const;
+export const FURNISHING_TYPES = ["Furnished", "Unfurnished"] as const;
+export const USAGE_TYPES = ["Residential", "Commercial"] as const;
+export const USER_STATUS_TYPES = ["Invited", "Active", "Inactive"] as const;
+export const CONTRACT_STATUS_TYPES = [
   "Active",
   "Expired",
   "Pending",
   "Cancelled",
-]);
+] as const;
+export const GENDER_TYPES = ["male", "female"] as const;
+export const ROLE_TYPES = ["admin", "user"] as const;
 
-export const property = pgTable("property", {
-  id: serial("id").primaryKey(),
+// Type exports for TypeScript
+export type OwnershipType = (typeof OWNERSHIP_TYPES)[number];
+export type PropertyType = (typeof PROPERTY_TYPES)[number];
+export type FurnishingType = (typeof FURNISHING_TYPES)[number];
+export type UsageType = (typeof USAGE_TYPES)[number];
+export type UserStatusType = (typeof USER_STATUS_TYPES)[number];
+export type ContractStatusType = (typeof CONTRACT_STATUS_TYPES)[number];
+export type GenderType = (typeof GENDER_TYPES)[number];
+export type RoleType = (typeof ROLE_TYPES)[number];
+
+export const property = sqliteTable("property", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   address: text("address").notNull(),
-  size: doublePrecision("size").notNull(),
-  ownershipType: ownershipOptions("ownership_type").notNull(),
-  propertyType: propertyOptions("property_type").notNull(),
-  furnishingType: furnishingOptions("furnishing_type").notNull(),
-  usageType: usageOptions("usage_type").notNull(),
+  size: real("size").notNull(),
+  ownershipType: text("ownership_type", {
+    enum: OWNERSHIP_TYPES,
+  }).notNull(),
+  propertyType: text("property_type", {
+    enum: PROPERTY_TYPES,
+  }).notNull(),
+  furnishingType: text("furnishing_type", {
+    enum: FURNISHING_TYPES,
+  }).notNull(),
+  usageType: text("usage_type", {
+    enum: USAGE_TYPES,
+  }).notNull(),
   imageUrl: text("image_url"),
 });
 
-export const userGender = pgEnum("GenderType", ["male", "female"]);
-export const userRole = pgEnum("RoleType", ["admin", "user"]);
-
-export const user = pgTable("user", {
-  id: serial("id").primaryKey(),
+export const user = sqliteTable("user", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   email: text("email").unique().notNull(),
   name: text("name").notNull(),
   phoneNumber: text("phone").unique(),
-  gender: userGender("gender"),
+  gender: text("gender", { enum: GENDER_TYPES }),
   qatarId: text("qatar_id").unique(),
-  dateOfBirth: date("date_of_birth"),
-  status: userStatusOptions("status").notNull(),
-  role: userRole("role").notNull(),
+  dateOfBirth: text("date_of_birth"),
+  status: text("status", {
+    enum: USER_STATUS_TYPES,
+  }).notNull(),
+  role: text("role", { enum: ROLE_TYPES }).notNull(),
 });
 
-export const contract = pgTable("contract", {
-  id: serial("id").primaryKey(),
+export const contract = sqliteTable("contract", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   propertyId: integer("property_id")
     .references(() => property.id)
     .notNull(),
   userId: integer("user_id")
     .references(() => user.id)
     .notNull(),
-  startDate: date("start_date").notNull(),
-  endDate: date("end_date").notNull(),
+  startDate: text("start_date").notNull(),
+  endDate: text("end_date").notNull(),
   contractUrl: text("contract_url"),
-  status: contractStatusOptions("status").notNull(),
+  status: text("status", {
+    enum: CONTRACT_STATUS_TYPES,
+  }).notNull(),
 });
 
-export const feedback = pgTable("feedback", {
-  id: serial("id").primaryKey(),
+export const feedback = sqliteTable("feedback", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
   userId: integer("user_id")
     .references(() => user.id)
     .notNull(),
@@ -86,4 +85,3 @@ export const feedback = pgTable("feedback", {
   rating: integer("rating").notNull(),
   comment: text("comment"),
 });
-
