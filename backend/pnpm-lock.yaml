@@ -8,18 +8,15 @@ importers:
 
   .:
     dependencies:
-      '@hono/swagger-ui':
-        specifier: ^0.5.2
-        version: 0.5.2(hono@4.9.8)
       '@hono/zod-validator':
-        specifier: ^0.7.3
-        version: 0.7.3(hono@4.9.8)(zod@4.1.9)
+        specifier: ^0.7.4
+        version: 0.7.4(hono@4.9.11)(zod@4.1.9)
       drizzle-orm:
         specifier: ^0.44.5
         version: 0.44.5(@types/pg@8.15.5)(pg@8.16.3)(postgres@3.4.7)
       hono:
-        specifier: ^4.9.8
-        version: 4.9.8
+        specifier: ^4.9.11
+        version: 4.9.11
       uuid:
         specifier: ^13.0.0
         version: 13.0.0
@@ -538,13 +535,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@hono/swagger-ui@0.5.2':
-    resolution: {integrity: sha512-7wxLKdb8h7JTdZ+K8DJNE3KXQMIpJejkBTQjrYlUWF28Z1PGOKw6kUykARe5NTfueIN37jbyG/sBYsbzXzG53A==}
-    peerDependencies:
-      hono: '*'
-
-  '@hono/zod-validator@0.7.3':
-    resolution: {integrity: sha512-uYGdgVib3RlGD698WR5dVM0zB3UuPY5vHKXffGUbUh7r4xY+mFIhF3/v4AcQVLrU5CQdBso8BJr4wuVoCrjTuQ==}
+  '@hono/zod-validator@0.7.4':
+    resolution: {integrity: sha512-biKGn3BRJVaftZlIPMyK+HCe/UHAjJ6sH0UyXe3+v0OcgVr9xfImDROTJFLtn9e3XEEAHGZIM9U6evu85abm8Q==}
     peerDependencies:
       hono: '>=3.9.0'
       zod: ^3.25.0 || ^4.0.0
@@ -872,8 +864,8 @@ packages:
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
 
-  hono@4.9.8:
-    resolution: {integrity: sha512-JW8Bb4RFWD9iOKxg5PbUarBYGM99IcxFl2FPBo2gSJO11jjUDqlP1Bmfyqt8Z/dGhIQ63PMA9LdcLefXyIasyg==}
+  hono@4.9.11:
+    resolution: {integrity: sha512-MyJ4xop3boTyXl8bJBh4i20AAZTLM3AXUJphyrUb0CpgTKYb1N703z53XiKUKchGUpcPqiiYkiLOXA3kqK3icA==}
     engines: {node: '>=16.9.0'}
 
   is-arrayish@0.3.4:
@@ -1323,13 +1315,9 @@ snapshots:
   '@esbuild/win32-x64@0.25.4':
     optional: true
 
-  '@hono/swagger-ui@0.5.2(hono@4.9.8)':
+  '@hono/zod-validator@0.7.4(hono@4.9.11)(zod@4.1.9)':
     dependencies:
-      hono: 4.9.8
-
-  '@hono/zod-validator@0.7.3(hono@4.9.8)(zod@4.1.9)':
-    dependencies:
-      hono: 4.9.8
+      hono: 4.9.11
       zod: 4.1.9
 
   '@img/sharp-darwin-arm64@0.33.5':
@@ -1596,7 +1584,7 @@ snapshots:
 
   glob-to-regexp@0.4.1: {}
 
-  hono@4.9.8: {}
+  hono@4.9.11: {}
 
   is-arrayish@0.3.4: {}
 

@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "property_hub_backend",
+  "name": "property-hub-backend",
   "main": "src/index.ts",
   "compatibility_date": "2025-09-17",
   "compatibility_flags": ["nodejs_compat"],
@@ -13,7 +13,7 @@
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "my-bucket",
+      "bucket_name": "property-hub",
     },
   ],
   "d1_databases": [

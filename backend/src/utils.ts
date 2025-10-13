@@ -1,10 +1,8 @@
 import { env } from "cloudflare:workers";
 import { v4 } from "uuid";
-import type { contract } from "./db/schema";
+import type { ContractStatusType } from "./db/schema";
 
-export function getStatus(
-  startDate: Date,
-): typeof contract.$inferSelect.status {
+export function getStatus(startDate: Date): ContractStatusType {
   const now = new Date();
   if (startDate > now) {
     return "Pending";

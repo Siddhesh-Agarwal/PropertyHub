@@ -1,10 +1,14 @@
-import { swaggerUI } from "@hono/swagger-ui";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, gt, lt, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
 import { trimTrailingSlash } from "hono/trailing-slash";
-import { contract, feedback, property, user } from "./db/schema";
+import {
+  contractTable,
+  feedbackTable,
+  propertyTable,
+  userTable,
+} from "./db/schema";
 import {
   contractSchema,
   createUserSchema,
@@ -22,37 +26,25 @@ const db = drizzle(env.D1);
 const app = new Hono();
 app.use(trimTrailingSlash());
 
-// Swagger UI
-const openApiDoc = {
-  openapi: "3.0.0", // This is the required version field
-  info: {
-    title: "PropertyHub API",
-    version: "1.0.0",
-    description: "API documentation for PropertyHub API",
-  },
-};
-app.get("/openapi-doc", (c) => c.json(openApiDoc));
-app.get("/docs", swaggerUI({ url: "/openapi-doc" }));
-
 // User details
 app.get("/user", async (c) => {
-  const res = await db.select().from(user);
+  const res = await db.select().from(userTable);
   return c.json(res);
 });
 
 app.get("/user/:id", zValidator("param", getUserSchema), async (c) => {
   const { id } = c.req.valid("param");
-  const res = await db.select().from(user).where(eq(user.id, id));
-  if (res.length === 1 && res[0]) {
-    return c.json(res[0]);
+  const [user] = await db.select().from(userTable).where(eq(userTable.id, id));
+  if (user) {
+    return c.json(user);
   }
   return c.json({ error: "ID not found" }, 401);
 });
 
 app.post("/user", zValidator("form", createUserSchema), async (c) => {
   const form = c.req.valid("form");
-  const res = await db
-    .insert(user)
+  const [user] = await db
+    .insert(userTable)
     .values({
       email: form.email,
       name: form.name,
@@ -60,7 +52,7 @@ app.post("/user", zValidator("form", createUserSchema), async (c) => {
       status: "Invited",
     })
     .returning();
-  return c.json(res[0]);
+  return c.json(user);
 });
 
 app.put(
@@ -70,8 +62,8 @@ app.put(
   async (c) => {
     const param = c.req.valid("param");
     const form = c.req.valid("form");
-    const res = await db
-      .update(user)
+    const [user] = await db
+      .update(userTable)
       .set({
         dateOfBirth: form.dateOfBirth.toISOString(),
         email: form.email,
@@ -81,10 +73,10 @@ app.put(
         qatarId: form.qatarId,
         status: "Active",
       })
-      .where(eq(user.id, param.id))
+      .where(eq(userTable.id, param.id))
       .returning();
-    if (res.length === 1 && res[0]) {
-      return c.json(res[0]);
+    if (user) {
+      return c.json(user);
     }
     return c.json({ error: "Can't find user with given user ID" }, 404);
   },
@@ -92,22 +84,21 @@ app.put(
 
 app.delete("/user/:id", zValidator("param", getUserSchema), async (c) => {
   const param = c.req.valid("param");
-  const res = await db
-    .update(user)
+  const user = await db
+    .update(userTable)
     .set({ status: "Inactive" })
-    .where(eq(user.id, param.id))
+    .where(eq(userTable.id, param.id))
     .returning();
-  if (res.length === 1) {
+  if (user) {
     return c.json({ message: "Deleted the account" });
-  } else {
-    return c.json({ message: "Failed to delete the account" }, 500);
   }
+  return c.json({ message: "Failed to delete the account" }, 500);
 });
 
 // Property Details
 app.get("/property", async (c) => {
-  const res = await db.select().from(property);
-  return c.json(res);
+  const properties = await db.select().from(propertyTable);
+  return c.json(properties);
 });
 
 app.get(
@@ -115,18 +106,21 @@ app.get(
   zValidator("param", getPropertyByIdSchema),
   async (c) => {
     const param = c.req.valid("param");
-    const res = await db
+    const [property] = await db
       .select()
-      .from(property)
-      .where(eq(property.id, param.propertyId));
-    return c.json(res);
+      .from(propertyTable)
+      .where(eq(propertyTable.id, param.propertyId));
+    if (!property) {
+      return c.json({ error: "Property not found" }, 404);
+    }
+    return c.json(property);
   },
 );
 
 app.post("/property", zValidator("form", propertySchema), async (c) => {
   const form = c.req.valid("form");
-  const res = await db
-    .insert(property)
+  const [property] = await db
+    .insert(propertyTable)
     .values({
       address: form.address,
       size: form.size,
@@ -137,8 +131,8 @@ app.post("/property", zValidator("form", propertySchema), async (c) => {
       imageUrl: form.imageUrl,
     })
     .returning();
-  if (res.length === 1 && res[0]) {
-    return c.json(res[0]);
+  if (property) {
+    return c.json(property);
   }
   return c.json({ error: "Unable to create property" }, 500);
 });
@@ -150,8 +144,8 @@ app.put(
   async (c) => {
     const form = c.req.valid("form");
     const param = c.req.valid("param");
-    const res = await db
-      .update(property)
+    const [property] = await db
+      .update(propertyTable)
       .set({
         address: form.address,
         size: form.size,
@@ -161,10 +155,10 @@ app.put(
         usageType: form.usageType,
         imageUrl: form.imageUrl,
       })
-      .where(eq(property.id, param.propertyId))
+      .where(eq(propertyTable.id, param.propertyId))
       .returning();
-    if (res.length === 1 && res[0]) {
-      return c.json(res[0]);
+    if (property) {
+      return c.json(property);
     }
     return c.json({ error: "Unable to update property details" }, 500);
   },
@@ -175,11 +169,12 @@ app.delete(
   zValidator("param", getPropertyByIdSchema),
   async (c) => {
     const param = c.req.valid("param");
-    const res = await db
-      .delete(property)
-      .where(eq(property.id, param.propertyId));
-    if (res.length === 1 && res[0]) {
-      return c.json(res[0]);
+    const [property] = await db
+      .delete(propertyTable)
+      .where(eq(propertyTable.id, param.propertyId))
+      .returning();
+    if (property) {
+      return c.json(property);
     }
     return c.json({ error: "Unable to delete property" }, 500);
   },
@@ -191,11 +186,11 @@ app.get(
   zValidator("param", getPropertyByIdSchema),
   async (c) => {
     const param = c.req.valid("param");
-    const res = await db
+    const feedbacks = await db
       .select()
-      .from(feedback)
-      .where(eq(feedback.propertyId, param.propertyId));
-    return c.json(res);
+      .from(feedbackTable)
+      .where(eq(feedbackTable.propertyId, param.propertyId));
+    return c.json(feedbacks);
   },
 );
 
@@ -206,20 +201,20 @@ app.post(
   async (c) => {
     const param = c.req.valid("param");
     const form = c.req.valid("form");
-    const checkRes = await db
+    const [feedback] = await db
       .select()
-      .from(feedback)
+      .from(feedbackTable)
       .where(
         and(
-          eq(feedback.propertyId, param.propertyId),
-          eq(feedback.userId, form.userId),
+          eq(feedbackTable.propertyId, param.propertyId),
+          eq(feedbackTable.userId, form.userId),
         ),
       );
-    if (checkRes.length > 0) {
+    if (!feedback) {
       return c.json({ error: "Feedback already exists" }, 400);
     }
     const insertRes = await db
-      .insert(feedback)
+      .insert(feedbackTable)
       .values({
         propertyId: param.propertyId,
         userId: form.userId,
@@ -238,32 +233,32 @@ app.put(
   async (c) => {
     const param = c.req.valid("param");
     const form = c.req.valid("form");
-    const checkRes = await db
+    const [feedback] = await db
       .select()
-      .from(feedback)
+      .from(feedbackTable)
       .where(
         and(
-          eq(feedback.propertyId, param.propertyId),
-          eq(feedback.userId, form.userId),
+          eq(feedbackTable.propertyId, param.propertyId),
+          eq(feedbackTable.userId, form.userId),
         ),
       );
-    if (checkRes.length !== 1) {
+    if (feedback === undefined) {
       return c.json({ error: "Feedback does not exist" }, 404);
     }
-    const updateRes = await db
-      .update(feedback)
+    const [updatedFeedback] = await db
+      .update(feedbackTable)
       .set({
         rating: form.rating,
         comment: form.comment,
       })
       .where(
         and(
-          eq(feedback.propertyId, param.propertyId),
-          eq(feedback.userId, form.userId),
+          eq(feedbackTable.propertyId, param.propertyId),
+          eq(feedbackTable.userId, form.userId),
         ),
       )
       .returning();
-    return c.json(updateRes);
+    return c.json(updatedFeedback);
   },
 );
 
@@ -275,8 +270,8 @@ app.get(
     const param = c.req.valid("param");
     const res = await db
       .select()
-      .from(contract)
-      .where(eq(contract.propertyId, param.propertyId));
+      .from(contractTable)
+      .where(eq(contractTable.propertyId, param.propertyId));
     return c.json(res);
   },
 );
@@ -288,8 +283,8 @@ app.get(
     const param = c.req.valid("param");
     const res = await db
       .select()
-      .from(contract)
-      .where(eq(contract.userId, param.userId));
+      .from(contractTable)
+      .where(eq(contractTable.userId, param.userId));
     return c.json(res);
   },
 );
@@ -301,20 +296,20 @@ app.post(
   async (c) => {
     const param = c.req.valid("param");
     const form = c.req.valid("form");
-    const checkRes = await db
+    const [contract] = await db
       .select()
-      .from(contract)
+      .from(contractTable)
       .where(
         and(
           // Find contracts for the same property but with overlapping dates
-          eq(contract.propertyId, param.propertyId),
+          eq(contractTable.propertyId, param.propertyId),
           or(
-            gt(contract.endDate, form.startDate.toISOString()),
-            lt(contract.startDate, form.endDate.toISOString()),
+            gt(contractTable.endDate, form.startDate.toISOString()),
+            lt(contractTable.startDate, form.endDate.toISOString()),
           ),
         ),
       );
-    if (checkRes.length !== 0) {
+    if (contract) {
       return c.json({ error: "Contract already exists" }, 409);
     }
     const body = await c.req.parseBody();

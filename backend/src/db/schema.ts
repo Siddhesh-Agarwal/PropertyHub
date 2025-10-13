@@ -25,7 +25,7 @@ export type ContractStatusType = (typeof CONTRACT_STATUS_TYPES)[number];
 export type GenderType = (typeof GENDER_TYPES)[number];
 export type RoleType = (typeof ROLE_TYPES)[number];
 
-export const property = sqliteTable("property", {
+export const propertyTable = sqliteTable("property", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   address: text("address").notNull(),
   size: real("size").notNull(),
@@ -44,7 +44,7 @@ export const property = sqliteTable("property", {
   imageUrl: text("image_url"),
 });
 
-export const user = sqliteTable("user", {
+export const userTable = sqliteTable("user", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   email: text("email").unique().notNull(),
   name: text("name").notNull(),
@@ -58,13 +58,13 @@ export const user = sqliteTable("user", {
   role: text("role", { enum: ROLE_TYPES }).notNull(),
 });
 
-export const contract = sqliteTable("contract", {
+export const contractTable = sqliteTable("contract", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   propertyId: integer("property_id")
-    .references(() => property.id)
+    .references(() => propertyTable.id)
     .notNull(),
   userId: integer("user_id")
-    .references(() => user.id)
+    .references(() => userTable.id)
     .notNull(),
   startDate: text("start_date").notNull(),
   endDate: text("end_date").notNull(),
@@ -74,13 +74,13 @@ export const contract = sqliteTable("contract", {
   }).notNull(),
 });
 
-export const feedback = sqliteTable("feedback", {
+export const feedbackTable = sqliteTable("feedback", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   userId: integer("user_id")
-    .references(() => user.id)
+    .references(() => userTable.id)
     .notNull(),
   propertyId: integer("property_id")
-    .references(() => property.id)
+    .references(() => propertyTable.id)
     .notNull(),
   rating: integer("rating").notNull(),
   comment: text("comment"),
