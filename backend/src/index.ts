@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import { zValidator } from "@hono/zod-validator";
 import { and, eq, gt, lt, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
@@ -20,7 +21,6 @@ import {
   userSchema,
 } from "./schema";
 import { getStatus, uploadFile } from "./utils";
-import { env } from "cloudflare:workers";
 
 const db = drizzle(env.D1);
 const app = new Hono();
