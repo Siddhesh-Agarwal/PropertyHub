@@ -200,10 +200,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
               Dropdown(
                 items: genderOptions,
                 label: "Gender",
-                selectedIndex:
-                    _selectedGender == null
-                        ? 0
-                        : genderOptions.indexOf(_selectedGender!),
+                value: _selectedGender,
                 onChanged: (String value) {
                   setState(() => _selectedGender = value);
                 },

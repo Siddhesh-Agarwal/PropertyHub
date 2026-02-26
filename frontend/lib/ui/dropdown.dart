@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 
 class Dropdown extends StatefulWidget {
   final List<String> items;
-  final int selectedIndex;
+  final int? selectedIndex;
+  final String? value;
   final String label;
   final Function(String) onChanged;
 
   const Dropdown({
     super.key,
     required this.items,
-    this.selectedIndex = 0,
+    this.selectedIndex,
+    this.value,
     required this.label,
     required this.onChanged,
   });
@@ -30,19 +32,24 @@ class _DropdownState extends State<Dropdown> {
   @override
   void didUpdateWidget(Dropdown oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Sync with parent when selectedIndex or items change
-    if (oldWidget.selectedIndex != widget.selectedIndex ||
+    if (oldWidget.value != widget.value ||
+        oldWidget.selectedIndex != widget.selectedIndex ||
         oldWidget.items != widget.items) {
       _updateSelectedValue();
     }
   }
 
   void _updateSelectedValue() {
-    if (widget.items.isNotEmpty &&
-        widget.selectedIndex >= 0 &&
-        widget.selectedIndex < widget.items.length) {
+    if (widget.value != null && widget.items.contains(widget.value)) {
       setState(() {
-        _selectedValue = widget.items[widget.selectedIndex];
+        _selectedValue = widget.value;
+      });
+    } else if (widget.selectedIndex != null &&
+        widget.items.isNotEmpty &&
+        widget.selectedIndex! >= 0 &&
+        widget.selectedIndex! < widget.items.length) {
+      setState(() {
+        _selectedValue = widget.items[widget.selectedIndex!];
       });
     } else {
       setState(() {

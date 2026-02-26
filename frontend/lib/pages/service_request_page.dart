@@ -110,6 +110,7 @@ class _RequestServicePageState extends State<RequestServicePage> {
                   children: [
                     Dropdown(
                       items: _serviceTypes,
+                      value: _selectedService,
                       label: "Select Service Type",
                       onChanged: (String? newValue) {
                         setState(() {

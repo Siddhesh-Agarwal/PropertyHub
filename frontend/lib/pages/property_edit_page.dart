@@ -155,9 +155,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                       Dropdown(
                         items: _ownershipOptions,
                         label: 'Ownership Type',
-                        selectedIndex: _ownershipOptions.indexOf(
-                          _ownershipType,
-                        ),
+                        value: _ownershipType,
                         onChanged: (value) {
                           setState(() {
                             _ownershipType = value;
@@ -168,7 +166,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                       Dropdown(
                         items: _propertyOptions,
                         label: 'Property Type',
-                        selectedIndex: _propertyOptions.indexOf(_propertyType),
+                        value: _propertyType,
                         onChanged: (value) {
                           setState(() {
                             _propertyType = value;
@@ -179,9 +177,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                       Dropdown(
                         items: _furnishingOptions,
                         label: 'Furnishing Type',
-                        selectedIndex: _furnishingOptions.indexOf(
-                          _furnishingType,
-                        ),
+                        value: _furnishingType,
                         onChanged: (value) {
                           setState(() {
                             _furnishingType = value;
@@ -191,7 +187,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                       Dropdown(
                         items: _usageOptions,
                         label: 'Usage Type',
-                        selectedIndex: _usageOptions.indexOf(_usageType),
+                        value: _usageType,
                         onChanged: (value) {
                           setState(() {
                             _usageType = value;
@@ -234,9 +230,7 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
                       Dropdown(
                         items: _availabilityOptions,
                         label: "Availability",
-                        selectedIndex: _availabilityOptions.indexOf(
-                          _availability,
-                        ),
+                        value: _availability,
                         onChanged: (value) {
                           setState(() {
                             _availability = value;

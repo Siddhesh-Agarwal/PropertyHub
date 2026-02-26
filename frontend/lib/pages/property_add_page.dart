@@ -99,6 +99,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               Dropdown(
                 label: 'Ownership Type',
                 items: ownershipOptions,
+                value: _ownershipType,
                 onChanged: (value) {
                   setState(() {
                     _ownershipType = value;
@@ -110,6 +111,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               Dropdown(
                 label: 'Property Type',
                 items: propertyOptions,
+                value: _propertyType,
                 onChanged: (value) {
                   setState(() {
                     _propertyType = value;
@@ -121,6 +123,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               Dropdown(
                 label: 'Furnishing Type',
                 items: furnishingOptions,
+                value: _furnishingType,
                 onChanged: (value) {
                   setState(() {
                     _furnishingType = value;
@@ -132,6 +135,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               Dropdown(
                 label: 'Usage Type',
                 items: usageOptions,
+                value: _usageType,
                 onChanged: (value) {
                   setState(() {
                     _usageType = value;

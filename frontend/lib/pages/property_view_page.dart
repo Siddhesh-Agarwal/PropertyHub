@@ -143,6 +143,7 @@ class _PropertiesPageState extends State<PropertiesPage> {
                             Expanded(
                               child: Dropdown(
                                 items: propertyOptions,
+                                value: _selectedPropertyType,
                                 label: "Property Type",
                                 onChanged: (newValue) {
                                   setState(() {
@@ -156,6 +157,7 @@ class _PropertiesPageState extends State<PropertiesPage> {
                             Expanded(
                               child: Dropdown(
                                 items: furnishingOptions,
+                                value: _selectedFurnishingType,
                                 label: "Furnishing Type",
                                 onChanged: (newValue) {
                                   setState(() {
@@ -174,6 +176,7 @@ class _PropertiesPageState extends State<PropertiesPage> {
                             Expanded(
                               child: Dropdown(
                                 items: ownershipOptions,
+                                value: _selectedOwnershipType,
                                 label: "Ownership Type",
                                 onChanged: (newValue) {
                                   setState(() {
@@ -187,10 +190,13 @@ class _PropertiesPageState extends State<PropertiesPage> {
                             Expanded(
                               child: Dropdown(
                                 items: usageOptions,
+                                value: _selectedUsageType,
                                 label: "Usage Type",
                                 onChanged: (newValue) {
-                                  _selectedUsageType = newValue;
-                                  _propertiesStream = _getPropertiesStream();
+                                  setState(() {
+                                    _selectedUsageType = newValue;
+                                    _propertiesStream = _getPropertiesStream();
+                                  });
                                 },
                               ),
                             ),

@@ -88,6 +88,7 @@ class _AddUserPageState extends State<AddUserPage> {
               const SizedBox(height: 16),
               Dropdown(
                 items: _roles,
+                value: _selectedRole,
                 label: 'Select Role',
                 onChanged: (String? newValue) {
                   setState(() {

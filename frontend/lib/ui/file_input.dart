@@ -7,6 +7,7 @@ class FileInputButton extends StatefulWidget {
   final String? subLabel;
   final FileType fileType;
   final List<String>? fileExtensions;
+  final String? initialFileName;
   final Function(PlatformFile) onFileSelected;
 
   const FileInputButton({
@@ -15,6 +16,7 @@ class FileInputButton extends StatefulWidget {
     this.subLabel,
     required this.fileType,
     this.fileExtensions,
+    this.initialFileName,
     required this.onFileSelected,
   });
 
@@ -24,6 +26,23 @@ class FileInputButton extends StatefulWidget {
 
 class _FileInputButtonState extends State<FileInputButton> {
   PlatformFile? _file;
+  String? _displayFileName;
+
+  @override
+  void initState() {
+    super.initState();
+    _displayFileName = widget.initialFileName;
+  }
+
+  @override
+  void didUpdateWidget(FileInputButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialFileName != widget.initialFileName && _file == null) {
+      setState(() {
+        _displayFileName = widget.initialFileName;
+      });
+    }
+  }
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -44,6 +63,7 @@ class _FileInputButtonState extends State<FileInputButton> {
     }
     setState(() {
       _file = files.first;
+      _displayFileName = _file!.name;
     });
     widget.onFileSelected(_file!);
   }
@@ -63,11 +83,43 @@ class _FileInputButtonState extends State<FileInputButton> {
             const SizedBox(height: 16),
             Text(widget.label, style: const TextStyle(fontSize: 16)),
             const SizedBox(height: 8),
-            if (widget.subLabel != null)
+            if (widget.subLabel != null && _displayFileName == null)
               Text(
                 widget.subLabel!,
                 style: const TextStyle(fontSize: 12, color: Colors.grey),
               ),
+            if (_displayFileName != null) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.blue.withValues(alpha: 0.5)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.attach_file, size: 16, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        _displayFileName!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             if (widget.subLabel != null) const SizedBox(height: 16),
           ],
         ),
