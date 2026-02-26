@@ -19,25 +19,19 @@ class _AuthSignupPageState extends State<AuthSignupPage> {
   final _formKey = GlobalKey<FormState>();
 
   Future<void> submitForm() async {
+    if (!_formKey.currentState!.validate()) return;
+
     final email = _emailController.text.trim();
     final password = _passwordController.text;
-    final confirmPassword = _confirmPasswordController.text;
 
-    if (password != confirmPassword) {
-      errorSnack(context, 'Passwords do not match');
-      return;
+    try {
+      await authService.value.createAccount(email: email, password: password);
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/login');
+    } catch (error) {
+      if (!mounted) return;
+      errorSnack(context, error.toString());
     }
-
-    await authService.value
-        .createAccount(email: email, password: password)
-        .then((value) {
-          if (!mounted) return;
-          Navigator.pushNamed(context, '/login');
-        })
-        .catchError((error) {
-          if (!mounted) return;
-          errorSnack(context, error.message);
-        });
   }
 
   @override
@@ -142,6 +136,7 @@ class _AuthSignupPageState extends State<AuthSignupPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 }

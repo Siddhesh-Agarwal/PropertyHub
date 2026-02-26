@@ -22,9 +22,16 @@ class _AuthResetPasswordPageState extends State<AuthResetPasswordPage> {
   }
 
   Future<void> overridePassword() async {
-    await authService.value.resetPassword(email: _emailController.text);
-    if (!mounted) return;
-    successSnack(context, 'Password reset email sent');
+    if (_formKey.currentState!.validate()) {
+      try {
+        await authService.value.resetPassword(email: _emailController.text.trim());
+        if (!mounted) return;
+        successSnack(context, 'Password reset email sent');
+      } catch (e) {
+        if (!mounted) return;
+        errorSnack(context, e.toString());
+      }
+    }
   }
 
   @override

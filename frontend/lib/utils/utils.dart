@@ -6,7 +6,7 @@ bool isValidEmail(String email) {
   ).hasMatch(email);
 }
 
-void debugPrint(String message) {
+void kPrint(String message) {
   if (kDebugMode) {
     print(message);
   }

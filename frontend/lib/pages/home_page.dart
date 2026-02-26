@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '/services/auth_services.dart';
 import '/services/constants.dart';
 import '/ui/loading.dart';
+import '/ui/error.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -108,12 +109,15 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: (userMode == UserMode.admin) ? null : FloatingActionButton(
-        child: const Icon(Icons.sos),
-        onPressed: () {
-          Navigator.pushNamed(context, '/sos');
-        },
-      ),
+      floatingActionButton:
+          (userMode == UserMode.admin)
+              ? null
+              : FloatingActionButton(
+                child: const Icon(Icons.sos),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/sos');
+                },
+              ),
       body:
           _loading
               ? loading()
@@ -188,13 +192,9 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ]
                             : [
-                              const SizedBox(height: 20),
-                              Text(
-                                _errorMessage,
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              ErrorView(
+                                error: _errorMessage,
+                                onRetry: _initializeData,
                               ),
                             ],
                   ),

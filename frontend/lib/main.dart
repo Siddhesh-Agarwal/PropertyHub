@@ -23,6 +23,7 @@ import 'pages/service_view_page.dart';
 import 'pages/sos_page.dart';
 import 'pages/user_add_page.dart';
 import 'pages/user_page.dart';
+import 'services/auth_services.dart';
 import 'services/constants.dart';
 
 void main() async {
@@ -45,6 +46,8 @@ void main() async {
     );
   }
 
+  await authService.value.initialize();
+
   runApp(const MyApp());
 }
 
@@ -54,27 +57,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return MaterialApp(
       title: appName,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        brightness: Brightness.light,
-        primaryColor: Colors.blue,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
+        ),
+        useMaterial3: true,
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.blue,
           foregroundColor: Colors.white,
-          titleTextStyle: TextStyle(
-            fontFamily: GoogleFonts.inter().fontFamily,
+          titleTextStyle: GoogleFonts.inter(
             fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
         textTheme: TextTheme(
-          displayLarge: TextStyle(fontSize: 72, fontWeight: FontWeight.bold),
+          displayLarge: const TextStyle(fontSize: 72, fontWeight: FontWeight.bold),
           titleLarge: GoogleFonts.inter(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -86,7 +87,6 @@ class MyApp extends StatelessWidget {
           titleSmall: GoogleFonts.inter(fontSize: 18),
           displaySmall: GoogleFonts.pacifico(),
         ),
-        useMaterial3: true,
       ),
       initialRoute: '/login',
       routes: {

@@ -34,6 +34,11 @@ class _AddUserPageState extends State<AddUserPage> {
   void initState() {
     super.initState();
     _initializeData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_userMode != UserMode.admin) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   void _initializeData() {
@@ -64,7 +69,7 @@ class _AddUserPageState extends State<AddUserPage> {
   @override
   Widget build(BuildContext context) {
     if (_userMode != UserMode.admin) {
-      Navigator.pop(context);
+      return const SizedBox.shrink();
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Add User')),

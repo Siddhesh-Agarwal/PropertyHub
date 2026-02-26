@@ -52,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
             onPressed: () {
               Navigator.pushNamed(context, "/profile/edit", arguments: email);
             },
-            icon: Icon(Icons.edit_square),
+            icon: const Icon(Icons.edit_square),
           ),
           IconButton(
             onPressed: () {
@@ -63,7 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 (route) => false,
               );
             },
-            icon: Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),

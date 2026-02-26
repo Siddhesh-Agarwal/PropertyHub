@@ -26,6 +26,11 @@ class _UserPageState extends State<UserPage> {
   void initState() {
     super.initState();
     _loadUsers();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authService.value.userMode != UserMode.admin) {
+        Navigator.of(context).pop();
+      }
+    });
   }
 
   Future<void> _loadUsers() async {
@@ -102,7 +107,7 @@ class _UserPageState extends State<UserPage> {
   @override
   Widget build(BuildContext context) {
     if (_userMode != UserMode.admin) {
-      Navigator.pop(context);
+      return const SizedBox.shrink();
     }
 
     return Scaffold(

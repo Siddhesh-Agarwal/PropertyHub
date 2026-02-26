@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '/services/db_service.dart';
 import '/services/constants.dart';
+import '/utils/utils.dart';
 
 enum UserStatus { notInvited, invited, active }
 
@@ -14,6 +15,17 @@ class AuthService {
   String? userName;
   UserMode? userMode;
 
+  Future<void> initialize() async {
+    if (user != null) {
+      try {
+        await _getCurrentUserInfo();
+      } catch (e) {
+        kPrint("Error initializing user: $e");
+        await signOut();
+      }
+    }
+  }
+
   Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
   Future<UserCredential> signIn({
@@ -24,7 +36,12 @@ class AuthService {
       email: email,
       password: password,
     );
-    await _getCurrentUserInfo();
+    try {
+      await _getCurrentUserInfo();
+    } catch (e) {
+      await signOut();
+      rethrow;
+    }
     return userCreds;
   }
 
@@ -92,7 +109,7 @@ class AuthService {
       case 'active':
         return UserStatus.active;
       default:
-        throw Exception("Unknown user status $doc['status']");
+        throw Exception("Unknown user status ${doc['status']}");
     }
   }
 }

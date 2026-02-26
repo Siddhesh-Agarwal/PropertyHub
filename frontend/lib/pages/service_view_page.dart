@@ -4,6 +4,7 @@ import '/services/auth_services.dart';
 import '/services/constants.dart';
 import '/services/db_service.dart';
 import '/ui/loading.dart';
+import '/ui/error.dart';
 import '/ui/snackbar.dart';
 
 class ViewServiceRequestPage extends StatefulWidget {
@@ -94,8 +95,9 @@ class _ViewServiceRequestPageState extends State<ViewServiceRequestPage> {
             AsyncSnapshot<QuerySnapshot> snapshot,
           ) {
             if (snapshot.hasError) {
-              return Center(
-                child: Text('Something went wrong: ${snapshot.error}'),
+              return ErrorView(
+                error: snapshot.error.toString(),
+                onRetry: () => setState(() {}),
               );
             }
 

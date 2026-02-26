@@ -7,6 +7,8 @@ import '/services/auth_services.dart';
 import '/services/contract_service.dart';
 import '/services/storage_service.dart';
 import '/ui/snackbar.dart';
+import '/ui/error.dart';
+import '/ui/loading.dart';
 
 class ContractPage extends StatefulWidget {
   const ContractPage({super.key});
@@ -23,32 +25,18 @@ class _ContractPageState extends State<ContractPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Contracts'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(title: const Text('My Contracts')),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: contractService.streamCustomerContracts(email),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return loading();
           }
 
           if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, size: 64, color: Colors.red),
-                  const SizedBox(height: 16),
-                  Text('Error: ${snapshot.error}'),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () => setState(() {}),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
+            return ErrorView(
+              error: snapshot.error.toString(),
+              onRetry: () => setState(() {}),
             );
           }
 

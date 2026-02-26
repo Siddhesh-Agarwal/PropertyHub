@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '/services/contract_service.dart';
 import '/ui/date_input.dart';
+import '/ui/button.dart';
 import '/ui/file_input.dart';
 import '/ui/snackbar.dart';
 import '/utils/utils.dart';
@@ -117,6 +118,8 @@ class _PropertyContractEditPageState extends State<PropertyContractEditPage> {
                   });
                 },
               ),
+              const SizedBox(height: 24),
+              OutlineButton(onPressed: onSubmit, label: "Upload Contract"),
             ],
           ),
         ),

@@ -60,7 +60,8 @@ class _DropdownState extends State<Dropdown> {
           labelText: widget.label,
           border: const OutlineInputBorder(),
         ),
-        value: _selectedValue,
+        key: ValueKey(_selectedValue),
+        initialValue: _selectedValue,
         items:
             widget.items.map((String option) {
               return DropdownMenuItem<String>(

@@ -21,13 +21,15 @@ class _AuthSigninPageState extends State<AuthSigninPage> {
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    try {
-      await authService.value.signIn(email: email.trim(), password: password);
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
-    } catch (e) {
-      if (!mounted) return;
-      errorSnack(context, e.toString());
+    if (_formKey.currentState!.validate()) {
+      try {
+        await authService.value.signIn(email: email.trim(), password: password);
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, '/home');
+      } catch (e) {
+        if (!mounted) return;
+        errorSnack(context, e.toString());
+      }
     }
   }
 

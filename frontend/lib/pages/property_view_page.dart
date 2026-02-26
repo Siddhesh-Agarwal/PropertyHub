@@ -4,6 +4,7 @@ import '/services/constants.dart';
 import '/services/db_service.dart';
 import '/ui/dropdown.dart';
 import '/ui/loading.dart';
+import '/ui/error.dart';
 import '/ui/snackbar.dart';
 import '/utils/property.dart';
 
@@ -97,8 +98,6 @@ class _PropertiesPageState extends State<PropertiesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Properties'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -125,12 +124,13 @@ class _PropertiesPageState extends State<PropertiesPage> {
                   stream: _propertiesStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      );
+                      return loading();
                     }
                     if (snapshot.hasError) {
-                      return Center(child: Text('Error: ${snapshot.error}'));
+                      return ErrorView(
+                        error: snapshot.error.toString(),
+                        onRetry: () => setState(() {}),
+                      );
                     }
                     final properties = snapshot.data ?? [];
 
