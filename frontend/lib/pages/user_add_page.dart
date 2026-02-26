@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '/services/user_service.dart';
-import '/services/auth_services.dart';
-import '/services/constants.dart';
 import '/ui/button.dart';
 import '/ui/dropdown.dart';
 import '/ui/snackbar.dart';
@@ -20,7 +18,6 @@ class _AddUserPageState extends State<AddUserPage> {
   final _emailController = TextEditingController();
   String _selectedRole = 'User';
   final List<String> _roles = ['User', 'Admin'];
-  UserMode? get _userMode => authService.value.userMode;
   UserService userService = UserService();
 
   @override
@@ -33,20 +30,6 @@ class _AddUserPageState extends State<AddUserPage> {
   @override
   void initState() {
     super.initState();
-    _initializeData();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_userMode != UserMode.admin) {
-        Navigator.of(context).pop();
-      }
-    });
-  }
-
-  void _initializeData() {
-    if (_userMode == null) {
-      authService.value.signOut();
-      Navigator.pushReplacementNamed(context, '/login');
-      return;
-    }
   }
 
   Future<void> _addUser() async {
@@ -68,9 +51,6 @@ class _AddUserPageState extends State<AddUserPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_userMode != UserMode.admin) {
-      return const SizedBox.shrink();
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Add User')),
       body: Padding(

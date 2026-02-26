@@ -3,8 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '/services/auth_services.dart';
 import '/services/constants.dart';
 import '/services/db_service.dart';
-import '/ui/loading.dart';
 import '/ui/error.dart';
+import '/ui/loading.dart';
+import '/ui/service_request_card.dart';
 import '/ui/snackbar.dart';
 
 class ViewServiceRequestPage extends StatefulWidget {
@@ -114,34 +115,10 @@ class _ViewServiceRequestPageState extends State<ViewServiceRequestPage> {
                   snapshot.data!.docs.map((DocumentSnapshot document) {
                     Map<String, dynamic> data =
                         document.data()! as Map<String, dynamic>;
-                    return Card(
-                      margin: const EdgeInsets.all(8.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                      ),
-                      borderOnForeground: true,
-                      elevation: 3,
-                      child: ListTile(
-                        title: Text('Service: ${data['serviceType'] ?? 'N/A'}'),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              'Service Type: ${data['serviceType'] ?? 'N/A'}',
-                            ),
-                            Text('Date: ${parseDateString(data['date'])}'),
-                            Text('Notes: ${data['notes'] ?? 'N/A'}'),
-                          ],
-                        ),
-                        contentPadding: const EdgeInsets.all(16.0),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios),
-                          onPressed: () {
-                            // Navigate to a detailed view or perform an action
-                            _showServiceRequestDetails(context, data);
-                          },
-                        ),
-                      ),
+                    return ServiceRequestCard(
+                      data: data,
+                      formattedDate: parseDateString(data['date']),
+                      onTap: () => _showServiceRequestDetails(context, data),
                     );
                   }).toList(),
             );

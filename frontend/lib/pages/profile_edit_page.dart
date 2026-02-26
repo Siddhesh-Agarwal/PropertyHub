@@ -214,6 +214,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 label: "Date of Birth",
                 placeholder: "Select your date of birth",
                 selectedDate: _selectedDate,
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now().subtract(
+                  const Duration(days: 365 * 18),
+                ),
               ),
               const SizedBox(height: 8),
               if (_selectedDate != null)

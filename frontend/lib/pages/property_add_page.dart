@@ -1,8 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/services/auth_services.dart';
-import '/services/constants.dart';
 import '/services/db_service.dart';
 import '/services/storage_service.dart';
 import '/ui/button.dart';
@@ -28,7 +26,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   String _furnishingType = 'Furnished';
   String _usageType = 'Residential';
   PlatformFile? _propertyImage;
-  UserMode? get _userMode => authService.value.userMode;
 
   @override
   void dispose() {
@@ -40,20 +37,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   @override
   void initState() {
     super.initState();
-    _initializeData();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_userMode != UserMode.admin) {
-        Navigator.of(context).pop();
-      }
-    });
-  }
-
-  void _initializeData() {
-    if (_userMode == null) {
-      authService.value.signOut();
-      Navigator.pushReplacementNamed(context, '/login');
-      return;
-    }
   }
 
   Future<void> _submitForm() async {
@@ -89,9 +72,6 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_userMode != UserMode.admin) {
-      return const SizedBox.shrink();
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Add New Property')),
       body: SingleChildScrollView(

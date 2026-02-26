@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '/services/user_service.dart';
-import '/services/auth_services.dart';
-import '/services/constants.dart';
 import '/ui/loading.dart';
 import '/ui/snackbar.dart';
+import '/ui/user_list_tile.dart';
 
 class UserPage extends StatefulWidget {
   const UserPage({super.key});
@@ -19,32 +18,17 @@ class _UserPageState extends State<UserPage> {
   final int _usersPerPage = 20;
   int _currentPage = 0;
   bool _loading = false;
-  UserMode? _userMode;
   UserService userService = UserService();
 
   @override
   void initState() {
     super.initState();
     _loadUsers();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authService.value.userMode != UserMode.admin) {
-        Navigator.of(context).pop();
-      }
-    });
   }
 
   Future<void> _loadUsers() async {
     setState(() => _loading = true);
     try {
-      var userMode = authService.value.userMode;
-      if (userMode == null) {
-        authService.value.signOut();
-        Navigator.pushReplacementNamed(context, '/login');
-        return;
-      }
-      setState(() {
-        _userMode = userMode;
-      });
       final querySnapshot = await userService.getUsers();
       _users =
           querySnapshot.docs.map((doc) {
@@ -106,10 +90,6 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_userMode != UserMode.admin) {
-      return const SizedBox.shrink();
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Users'),
@@ -158,22 +138,7 @@ class _UserPageState extends State<UserPage> {
                             );
                           }
                           final user = _filteredUsers[index];
-                          return ListTile(
-                            leading: CircleAvatar(
-                              child: const Icon(Icons.person),
-                            ),
-                            title: Text(user['displayName']!),
-                            subtitle: Text(user['email']!),
-                            trailing: Badge(
-                              label: Text(
-                                user["role"].toString().toUpperCase(),
-                              ),
-                              backgroundColor:
-                                  user["role"] == "Admin"
-                                      ? Colors.blue
-                                      : Colors.green,
-                            ),
-                          );
+                          return UserListTile(user: user);
                         },
                       ),
                     ),

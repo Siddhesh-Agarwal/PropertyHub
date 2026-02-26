@@ -87,25 +87,35 @@ class _PropertyContractEditPageState extends State<PropertyContractEditPage> {
 
               DateInput(
                 onDateSelected: (DateTime? date) {
-                  if (date != null) return;
+                  if (date == null) return;
                   setState(() {
-                    startDate = date!;
+                    startDate = date;
                   });
                 },
                 label: "Start Date",
                 placeholder: "Choose start date",
+                selectedDate: startDate,
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
               ),
+
+              SizedBox(height: 16),
 
               DateInput(
                 onDateSelected: (DateTime? date) {
-                  if (date != null) return;
+                  if (date == null) return;
                   setState(() {
-                    endDate = date!;
+                    endDate = date;
                   });
                 },
                 label: "End Date",
                 placeholder: "Choose end date",
+                selectedDate: endDate,
+                firstDate: startDate ?? DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 365 * 10)),
               ),
+
+              SizedBox(height: 16),
 
               FileInputButton(
                 label: "Upload Contract",

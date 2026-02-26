@@ -1,7 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import '/services/auth_services.dart';
-import '/services/constants.dart';
 import '/services/db_service.dart';
 import '/services/storage_service.dart';
 import '/ui/button.dart';
@@ -21,7 +19,6 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   final _formKey = GlobalKey<FormState>();
   final _addressController = TextEditingController();
   final _sizeController = TextEditingController();
-  UserMode? get _userMode => authService.value.userMode;
   bool _loading = false;
   // get propertyId from Navigator Arguement
   String get propertyId => ModalRoute.of(context)!.settings.arguments as String;
@@ -75,16 +72,6 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   @override
   void initState() {
     super.initState();
-    _initializeData();
-  }
-
-  void _initializeData() {
-    if (_userMode != UserMode.admin) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pop(context);
-      });
-      return;
-    }
     getValues();
   }
 

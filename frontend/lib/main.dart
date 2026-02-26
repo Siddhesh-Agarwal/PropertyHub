@@ -25,6 +25,7 @@ import 'pages/user_add_page.dart';
 import 'pages/user_page.dart';
 import 'services/auth_services.dart';
 import 'services/constants.dart';
+import 'ui/auth_guard.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +76,10 @@ class MyApp extends StatelessWidget {
           ),
         ),
         textTheme: TextTheme(
-          displayLarge: const TextStyle(fontSize: 72, fontWeight: FontWeight.bold),
+          displayLarge: const TextStyle(
+            fontSize: 72,
+            fontWeight: FontWeight.bold,
+          ),
           titleLarge: GoogleFonts.inter(
             fontSize: 36,
             fontWeight: FontWeight.bold,
@@ -91,23 +95,28 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/home': (context) => const HomePage(),
-        '/users': (context) => const UserPage(),
-        '/users/add': (context) => const AddUserPage(),
+        '/users': (context) => const AdminGuard(child: UserPage()),
+        '/users/add': (context) => const AdminGuard(child: AddUserPage()),
         '/register': (context) => const AuthSignupPage(),
         '/login': (context) => const AuthSigninPage(),
         '/forgot-password': (context) => const AuthResetPasswordPage(),
         '/profile': (context) => const ProfilePage(),
         '/profile/edit': (context) => const EditProfilePage(),
-        '/properties': (context) => const PropertiesPage(),
-        '/properties/add': (context) => const AddPropertyPage(),
-        '/properties/edit': (context) => const EditPropertyPage(),
-        '/properties/contract': (context) => const PropertyContractPage(),
-        '/properties/contract/edit': (context) => const PropertyContractEditPage(),
-        '/contract': (context) => const ContractPage(),
+        '/properties': (context) => const AdminGuard(child: PropertiesPage()),
+        '/properties/add':
+            (context) => const AdminGuard(child: AddPropertyPage()),
+        '/properties/edit':
+            (context) => const AdminGuard(child: EditPropertyPage()),
+        '/properties/contract':
+            (context) => const AdminGuard(child: PropertyContractPage()),
+        '/properties/contract/edit':
+            (context) => const AdminGuard(child: PropertyContractEditPage()),
+        '/contract': (context) => const UserGuard(child: ContractPage()),
         '/feedback': (context) => const FeedbackPage(),
         '/service': (context) => const ViewServiceRequestPage(),
-        '/service/request': (context) => const RequestServicePage(),
-        '/sos': (context) => const SosPage(),
+        '/service/request':
+            (context) => const UserGuard(child: RequestServicePage()),
+        '/sos': (context) => const UserGuard(child: SosPage()),
       },
       debugShowCheckedModeBanner: false,
     );

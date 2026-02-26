@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '/services/auth_services.dart';
 import '/services/constants.dart';
-import '/ui/loading.dart';
+import '/ui/dashboard_card.dart';
 import '/ui/error.dart';
+import '/ui/loading.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -46,46 +47,6 @@ class _HomePageState extends State<HomePage> {
         _loading = false;
       });
     }
-  }
-
-  Widget _buildBox({
-    required BuildContext context,
-    required String routeName,
-    required IconData icon,
-    required String text,
-    Color color = Colors.grey,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, routeName);
-      },
-      child: Container(
-        height: 150,
-        padding: const EdgeInsets.all(24),
-        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color, width: 2),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: color, size: 48),
-            const SizedBox(height: 10),
-            Text(
-              text,
-              style: TextStyle(
-                color: color,
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   @override
@@ -144,8 +105,7 @@ class _HomePageState extends State<HomePage> {
                               ),
 
                               if (userMode == UserMode.admin)
-                                _buildBox(
-                                  context: context,
+                                DashboardCard(
                                   routeName: '/properties',
                                   icon: Icons.house,
                                   text:
@@ -155,23 +115,20 @@ class _HomePageState extends State<HomePage> {
                                   color: Colors.blue,
                                 ),
                               if (userMode == UserMode.admin)
-                                _buildBox(
-                                  context: context,
+                                DashboardCard(
                                   routeName: '/users',
                                   icon: Icons.people,
                                   text: 'Manage Users',
                                   color: Colors.brown,
                                 ),
                               if (userMode == UserMode.user)
-                                _buildBox(
-                                  context: context,
+                                DashboardCard(
                                   routeName: "/contract",
                                   icon: Icons.policy,
                                   text: "View Contract",
                                   color: Colors.purple,
                                 ),
-                              _buildBox(
-                                context: context,
+                              DashboardCard(
                                 routeName: '/service',
                                 icon: Icons.room_service,
                                 text:
@@ -180,8 +137,7 @@ class _HomePageState extends State<HomePage> {
                                         : 'Service',
                                 color: Colors.green,
                               ),
-                              _buildBox(
-                                context: context,
+                              DashboardCard(
                                 routeName: '/feedback',
                                 icon: Icons.comment,
                                 text:

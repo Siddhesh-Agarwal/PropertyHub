@@ -6,6 +6,8 @@ class DateInput extends StatefulWidget {
   final String label;
   final String placeholder;
   final DateTime? selectedDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   const DateInput({
     super.key,
@@ -13,6 +15,8 @@ class DateInput extends StatefulWidget {
     required this.label,
     required this.placeholder,
     this.selectedDate,
+    this.firstDate,
+    this.lastDate,
   });
 
   @override
@@ -39,9 +43,13 @@ class _DateInputState extends State<DateInput> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+      initialDate:
+          _selectedDate ??
+          (widget.firstDate != null && widget.firstDate!.isAfter(DateTime.now())
+              ? widget.firstDate!
+              : DateTime.now()),
+      firstDate: widget.firstDate ?? DateTime(1900),
+      lastDate: widget.lastDate ?? DateTime(2100),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
