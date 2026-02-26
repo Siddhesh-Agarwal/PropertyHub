@@ -42,41 +42,52 @@ class _FeedbackPageState extends State<FeedbackPage> {
     _initializeData();
   }
 
-  void _initializeData() {
+  Future<void> _initializeData() async {
     setState(() {
       _loading = true;
     });
-    final userMode = authService.value.userMode;
+    try {
+      final userMode = authService.value.userMode;
 
-    if (userMode == null) {
-      authService.value.signOut();
-      Navigator.pushReplacementNamed(context, '/login');
-      return;
+      if (userMode == null) {
+        authService.value.signOut();
+        Navigator.pushReplacementNamed(context, '/login');
+        return;
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _userMode = userMode;
+      });
+
+      if (userMode == UserMode.user) {
+        await checkHasSubmitted();
+      } else {
+        await fetchFeedbacks();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      errorSnack(context, "Error loading data: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+        });
+      }
     }
-
-    setState(() {
-      _userMode = userMode;
-    });
-
-    if (userMode == UserMode.user) {
-      checkHasSubmitted();
-    } else {
-      fetchFeedbacks();
-    }
-    setState(() {
-      _loading = false;
-    });
   }
 
-  void checkHasSubmitted() async {
+  Future<void> checkHasSubmitted() async {
     final querySnapshot = await db.collection("feedbacks").doc(email).get();
+    if (!mounted) return;
     setState(() {
       _hasSubmitted = querySnapshot.exists;
     });
   }
 
-  void fetchFeedbacks() async {
+  Future<void> fetchFeedbacks() async {
     final querySnapshot = await db.collection("feedbacks").get();
+    if (!mounted) return;
     setState(() {
       _feedbacks =
           querySnapshot.docs.map((doc) {
