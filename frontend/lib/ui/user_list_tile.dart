@@ -7,13 +7,17 @@ class UserListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String displayName = user['displayName'] ?? 'Unknown User';
+    final String email = user['email'] ?? user['id'] ?? 'No Email';
+    final String role = user['role']?.toString() ?? 'User';
+
     return ListTile(
       leading: CircleAvatar(child: const Icon(Icons.person)),
-      title: Text(user['displayName']!),
-      subtitle: Text(user['email']!),
+      title: Text(displayName),
+      subtitle: Text(email),
       trailing: Badge(
-        label: Text(user["role"].toString().toUpperCase()),
-        backgroundColor: user["role"] == "Admin" ? Colors.blue : Colors.green,
+        label: Text(role.toUpperCase()),
+        backgroundColor: role == "Admin" ? Colors.blue : Colors.green,
       ),
     );
   }

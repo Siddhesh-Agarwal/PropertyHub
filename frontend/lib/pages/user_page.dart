@@ -59,9 +59,13 @@ class _UserPageState extends State<UserPage> {
               ? _getUsersForPage(_currentPage)
               : _users
                   .where(
-                    (user) => user["displayName"]?.toLowerCase().contains(
-                      query.toLowerCase(),
-                    ),
+                    (user) =>
+                        user["displayName"]?.toLowerCase().contains(
+                          query.toLowerCase(),
+                        ) ||
+                        user["email"]?.toLowerCase().contains(
+                          query.toLowerCase(),
+                        ),
                   )
                   .toList();
     });
