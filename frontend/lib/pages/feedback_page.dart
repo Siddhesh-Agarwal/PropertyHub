@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import '/services/auth_services.dart';
-import '/services/constants.dart';
 import '/services/db_service.dart';
 import '/ui/button.dart';
 import '/ui/loading.dart';
@@ -14,179 +13,18 @@ class FeedbackPage extends StatefulWidget {
   State<FeedbackPage> createState() => _FeedbackPageState();
 }
 
-class Feedback {
-  final String email;
-  final double rating;
-  final String feedback;
-  final DateTime timestamp;
-
-  Feedback({
-    required this.email,
-    required this.rating,
-    required this.feedback,
-    required this.timestamp,
-  });
-}
-
 class _FeedbackPageState extends State<FeedbackPage> {
   bool _loading = false;
   bool _hasSubmitted = false;
-  List<Feedback> _feedbacks = [];
-  String? get email => authService.value.user?.email;
-
-  UserMode? _userMode;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeData();
-  }
-
-  Future<void> _initializeData() async {
-    setState(() {
-      _loading = true;
-    });
-    try {
-      final userMode = authService.value.userMode;
-
-      if (userMode == null) {
-        authService.value.signOut();
-        Navigator.pushReplacementNamed(context, '/login');
-        return;
-      }
-
-      if (!mounted) return;
-      setState(() {
-        _userMode = userMode;
-      });
-
-      if (userMode == UserMode.user) {
-        await checkHasSubmitted();
-      } else {
-        await fetchFeedbacks();
-      }
-    } catch (e) {
-      if (!mounted) return;
-      errorSnack(context, "Error loading data: $e");
-    } finally {
-      if (mounted) {
-        setState(() {
-          _loading = false;
-        });
-      }
-    }
-  }
-
-  Future<void> checkHasSubmitted() async {
-    final querySnapshot = await db.collection("feedbacks").doc(email).get();
-    if (!mounted) return;
-    setState(() {
-      _hasSubmitted = querySnapshot.exists;
-    });
-  }
-
-  Future<void> fetchFeedbacks() async {
-    final querySnapshot = await db.collection("feedbacks").get();
-    if (!mounted) return;
-    setState(() {
-      _feedbacks =
-          querySnapshot.docs.map((doc) {
-            return Feedback(
-              email: doc.id,
-              rating: doc["rating"],
-              feedback: doc["feedback"],
-              timestamp: (doc["timestamp"]).toDate(),
-            );
-          }).toList();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_loading) {
-      return loading();
-    }
-    switch (_userMode) {
-      case UserMode.admin:
-        return AdminViewFeedbackPage(feedbacks: _feedbacks);
-      case UserMode.user:
-        return UserViewFeedbackPage(email: email!, hasSubmitted: _hasSubmitted);
-      default:
-        return Container();
-    }
-  }
-}
-
-class AdminViewFeedbackPage extends StatelessWidget {
-  final List<Feedback> feedbacks;
-
-  const AdminViewFeedbackPage({super.key, required this.feedbacks});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Feedback (Admin View)')),
-      body:
-          feedbacks.isEmpty
-              ? const Center(
-                child: Text(
-                  'No feedback available.',
-                  style: TextStyle(fontSize: 18),
-                ),
-              )
-              : Center(
-                child: ListView(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: feedbacks.length,
-                      itemBuilder: (context, index) {
-                        final feedback = feedbacks[index];
-                        return ListTile(
-                          title: Text(
-                            'Rating: ${feedback.rating.toInt().toString()}/5',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          leading: Text(feedback.feedback),
-                          subtitle: Text(feedback.email),
-                          trailing: Text(
-                            feedback.timestamp.toString().split(' ')[0],
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                          style: ListTileStyle.list,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-    );
-  }
-}
-
-class UserViewFeedbackPage extends StatefulWidget {
-  final String email;
-  final bool hasSubmitted;
-
-  const UserViewFeedbackPage({
-    super.key,
-    required this.email,
-    required this.hasSubmitted,
-  });
-
-  @override
-  State<UserViewFeedbackPage> createState() => _UserViewFeedbackPageState();
-}
-
-class _UserViewFeedbackPageState extends State<UserViewFeedbackPage> {
   double _rating = 0;
   final TextEditingController _feedbackController = TextEditingController();
-  bool _hasSubmitted = false;
+
+  String? get email => authService.value.user?.email;
 
   @override
   void initState() {
     super.initState();
-    _hasSubmitted = widget.hasSubmitted;
+    _checkStatus();
   }
 
   @override
@@ -195,26 +33,52 @@ class _UserViewFeedbackPageState extends State<UserViewFeedbackPage> {
     super.dispose();
   }
 
+  Future<void> _checkStatus() async {
+    setState(() => _loading = true);
+    try {
+      if (email == null) return;
+      final doc = await db.collection("feedbacks").doc(email).get();
+      if (mounted) {
+        setState(() {
+          _hasSubmitted = doc.exists;
+        });
+      }
+    } catch (e) {
+      if (mounted) errorSnack(context, "Error checking feedback status: $e");
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
   Future<void> _submitFeedback() async {
     if (_rating == 0) {
       errorSnack(context, 'Please rate your experience.');
       return;
     }
-    await db.collection("feedbacks").doc(widget.email).set({
-      "rating": _rating,
-      "feedback": _feedbackController.text,
-      "timestamp": DateTime.now(),
-    });
-    setState(() {
-      _hasSubmitted = true;
-    });
-    if (!mounted) return;
-    successSnack(context, 'Feedback submitted successfully!');
-    Navigator.pop(context);
+    setState(() => _loading = true);
+    try {
+      await db.collection("feedbacks").doc(email).set({
+        "rating": _rating,
+        "feedback": _feedbackController.text,
+        "timestamp": DateTime.now(),
+      });
+      if (mounted) {
+        setState(() {
+          _hasSubmitted = true;
+        });
+        successSnack(context, 'Feedback submitted successfully!');
+      }
+    } catch (e) {
+      if (mounted) errorSnack(context, "Error submitting feedback: $e");
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) return loading();
+
     if (_hasSubmitted) {
       return Scaffold(
         appBar: AppBar(title: const Text('Feedback')),
@@ -235,9 +99,7 @@ class _UserViewFeedbackPageState extends State<UserViewFeedbackPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 child: const Text('Back to Home'),
               ),
             ],
@@ -250,57 +112,55 @@ class _UserViewFeedbackPageState extends State<UserViewFeedbackPage> {
       appBar: AppBar(title: const Text('Feedback')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Text(
-              'Rate your experience:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Center(
-              child: RatingBar.builder(
-                initialRating: _rating,
-                minRating: 1.0,
-                maxRating: 5.0,
-                direction: Axis.horizontal,
-                allowHalfRating: false,
-                itemCount: 5,
-                ignoreGestures: _hasSubmitted,
-                itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                itemBuilder:
-                    (context, _) => const Icon(Icons.star, color: Colors.amber),
-                onRatingUpdate: (rating) {
-                  setState(() {
-                    _rating = rating;
-                  });
-                },
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Rate your experience:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Optional Feedback:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            TextFormField(
-              controller: _feedbackController,
-              maxLines: 5,
-              readOnly: _hasSubmitted,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter your feedback here...',
+              const SizedBox(height: 10),
+              Center(
+                child: RatingBar.builder(
+                  initialRating: _rating,
+                  minRating: 1.0,
+                  maxRating: 5.0,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  itemBuilder:
+                      (context, _) =>
+                          const Icon(Icons.star, color: Colors.amber),
+                  onRatingUpdate: (rating) {
+                    setState(() {
+                      _rating = rating;
+                    });
+                  },
+                ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your feedback';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 20),
-            OutlineButton(onPressed: _submitFeedback, label: 'Submit Feedback'),
-          ],
+              const SizedBox(height: 20),
+              const Text(
+                'Optional Feedback:',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: _feedbackController,
+                maxLines: 5,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your feedback here...',
+                ),
+              ),
+              const SizedBox(height: 20),
+              OutlineButton(
+                onPressed: _submitFeedback,
+                label: 'Submit Feedback',
+              ),
+            ],
+          ),
         ),
       ),
     );

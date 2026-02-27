@@ -138,7 +138,10 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.green,
                               ),
                               DashboardCard(
-                                routeName: '/feedback',
+                                routeName:
+                                    (userMode == UserMode.admin)
+                                        ? '/admin/feedback'
+                                        : '/feedback',
                                 icon: Icons.comment,
                                 text:
                                     (userMode == UserMode.admin)
@@ -146,6 +149,13 @@ class _HomePageState extends State<HomePage> {
                                         : 'Feedback',
                                 color: Colors.deepOrange,
                               ),
+                              if (userMode == UserMode.admin)
+                                DashboardCard(
+                                  routeName: '/admin/sos',
+                                  icon: Icons.sos,
+                                  text: 'SOS Requests',
+                                  color: Colors.red,
+                                ),
                             ]
                             : [
                               ErrorView(

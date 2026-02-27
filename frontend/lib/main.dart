@@ -23,6 +23,8 @@ import 'pages/service_view_page.dart';
 import 'pages/sos_page.dart';
 import 'pages/user_add_page.dart';
 import 'pages/user_page.dart';
+import 'pages/admin_sos_page.dart';
+import 'pages/admin_feedback_page.dart';
 import 'services/auth_services.dart';
 import 'services/constants.dart';
 import 'ui/auth_guard.dart';
@@ -112,11 +114,14 @@ class MyApp extends StatelessWidget {
         '/properties/contract/edit':
             (context) => const AdminGuard(child: PropertyContractEditPage()),
         '/contract': (context) => const UserGuard(child: ContractPage()),
-        '/feedback': (context) => const FeedbackPage(),
+        '/feedback': (context) => const UserGuard(child: FeedbackPage()),
         '/service': (context) => const ViewServiceRequestPage(),
         '/service/request':
             (context) => const UserGuard(child: RequestServicePage()),
         '/sos': (context) => const UserGuard(child: SosPage()),
+        '/admin/sos': (context) => const AdminGuard(child: AdminSosPage()),
+        '/admin/feedback':
+            (context) => const AdminGuard(child: AdminFeedbackPage()),
       },
       debugShowCheckedModeBanner: false,
     );
