@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '/services/auth_services.dart';
-import '/services/constants.dart';
 import '/services/db_service.dart';
 import '/ui/error.dart';
 import '/ui/loading.dart';
 import '/ui/service_request_card.dart';
 import '/ui/snackbar.dart';
 
-class ViewServiceRequestPage extends StatefulWidget {
-  const ViewServiceRequestPage({super.key});
+class ServiceAdminPage extends StatefulWidget {
+  const ServiceAdminPage({super.key});
 
   @override
-  State<ViewServiceRequestPage> createState() => _ViewServiceRequestPageState();
+  State<ServiceAdminPage> createState() => _ServiceAdminPageState();
 }
 
-class _ViewServiceRequestPageState extends State<ViewServiceRequestPage> {
+class _ServiceAdminPageState extends State<ServiceAdminPage> {
   late Stream<QuerySnapshot> _serviceRequestsStream;
-  UserMode? userMode;
 
   @override
   void initState() {
@@ -26,36 +23,14 @@ class _ViewServiceRequestPageState extends State<ViewServiceRequestPage> {
   }
 
   void _initializeData() {
-    setState(() {});
     try {
-      final mode = authService.value.userMode;
-
-      if (mode == null) {
-        authService.value.signOut();
-        Navigator.pushReplacementNamed(context, '/login');
-        return;
-      }
-
-      late Stream<QuerySnapshot> stream;
-      if (mode == UserMode.user) {
-        // fetch by user ID
-        stream =
-            db
-                .collection('service_requests')
-                .where('userId', isEqualTo: authService.value.user!.email)
-                .orderBy('date', descending: false)
-                .snapshots();
-      } else {
-        // fetch upcoming
-        stream =
-            db
-                .collection('service_requests')
-                .where('date', isGreaterThanOrEqualTo: DateTime.now())
-                .orderBy('date', descending: false)
-                .snapshots();
-      }
+      final stream =
+          db
+              .collection('service_requests')
+              .where('date', isGreaterThanOrEqualTo: DateTime.now())
+              .orderBy('date', descending: false)
+              .snapshots();
       setState(() {
-        userMode = mode;
         _serviceRequestsStream = stream;
       });
     } catch (e) {
@@ -73,18 +48,7 @@ class _ViewServiceRequestPageState extends State<ViewServiceRequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Service Requests'),
-        actions: [
-          if (userMode == UserMode.user)
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/service/request');
-              },
-              icon: const Icon(Icons.add),
-            ),
-        ],
-      ),
+      appBar: AppBar(title: const Text('Service Requests')),
       body: RefreshIndicator(
         onRefresh: () async {
           _initializeData();
@@ -143,6 +107,7 @@ class _ViewServiceRequestPageState extends State<ViewServiceRequestPage> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
+                Text('User: ${data['userId'] ?? 'N/A'}'),
                 Text('Service Type: ${data['serviceType'] ?? 'N/A'}'),
                 Text('Date: ${parseDateString(data['date'])}'),
                 Text('Notes: ${data['notes'] ?? 'N/A'}'),

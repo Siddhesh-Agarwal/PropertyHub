@@ -19,7 +19,8 @@ import 'pages/property_contract_edit_page.dart';
 import 'pages/property_contract_page.dart';
 import 'pages/property_view_page.dart';
 import 'pages/service_request_page.dart';
-import 'pages/service_view_page.dart';
+import 'pages/service_page.dart';
+import 'pages/service_admin_page.dart';
 import 'pages/sos_page.dart';
 import 'pages/user_add_page.dart';
 import 'pages/user_page.dart';
@@ -115,7 +116,9 @@ class MyApp extends StatelessWidget {
             (context) => const AdminGuard(child: PropertyContractEditPage()),
         '/contract': (context) => const UserGuard(child: ContractPage()),
         '/feedback': (context) => const UserGuard(child: FeedbackPage()),
-        '/service': (context) => const ViewServiceRequestPage(),
+        '/service': (context) => const UserGuard(child: ServicePage()),
+        '/admin/service':
+            (context) => const AdminGuard(child: ServiceAdminPage()),
         '/service/request':
             (context) => const UserGuard(child: RequestServicePage()),
         '/sos': (context) => const UserGuard(child: SosPage()),

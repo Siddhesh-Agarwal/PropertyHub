@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.brown,
       ),
       const DashboardCard(
-        routeName: '/service',
+        routeName: '/admin/service',
         icon: Icons.room_service,
         text: 'Service Requests',
         color: Colors.green,
