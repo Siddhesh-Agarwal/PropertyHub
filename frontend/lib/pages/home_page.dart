@@ -161,6 +161,7 @@ class _HomePageState extends State<HomePage> {
                                 ...adminCards
                               else
                                 ...userCards,
+                              const SizedBox(height: 120)
                             ]
                             : [
                               ErrorView(
