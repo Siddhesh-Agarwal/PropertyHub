@@ -87,6 +87,7 @@ class _RequestServicePageState extends State<RequestServicePage> {
         'date': _selectedDate,
         'notes': _notesController.text,
         'userId': email,
+        'status': 'new',
       });
       successSnack(context, 'Request Submitted Successfully!');
       Navigator.pop(context);

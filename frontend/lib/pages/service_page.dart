@@ -120,6 +120,7 @@ class _ServicePageState extends State<ServicePage> {
               children: <Widget>[
                 Text('Service Type: ${data['serviceType'] ?? 'N/A'}'),
                 Text('Date: ${parseDateString(data['date'])}'),
+                Text('Status: ${data['status'] ?? 'new'}'),
                 Text('Notes: ${data['notes'] ?? 'N/A'}'),
               ],
             ),
