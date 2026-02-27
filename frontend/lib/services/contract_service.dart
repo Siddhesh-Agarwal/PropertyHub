@@ -120,7 +120,18 @@ class ContractService {
     }
 
     TaskSnapshot snapshot = await uploadTask;
-    return await snapshot.ref.getDownloadURL();
+
+    // Add small delay/retry for getDownloadURL as it can sometimes fail with object-not-found
+    // immediately after upload due to eventual consistency
+    for (int i = 0; i < 3; i++) {
+      try {
+        return await snapshot.ref.getDownloadURL();
+      } catch (e) {
+        if (i == 2) rethrow;
+        await Future.delayed(Duration(milliseconds: 500 * (i + 1)));
+      }
+    }
+    throw Exception("Failed to get download URL");
   }
 
   // OPTIMIZED: Get customer contracts - single query, no filtering

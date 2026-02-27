@@ -23,14 +23,17 @@ Property Hub is a Flutter mobile app for property management, built with Firebas
 ## Architecture
 
 ### Routing
+
 All routes are defined in `lib/main.dart` using named routes (e.g. `/home`, `/login`, `/properties`). Navigation uses `Navigator.pushNamed` / `pushReplacementNamed`. Route arguments are passed via `ModalRoute.of(context)!.settings.arguments`.
 
 ### State & Auth
+
 - No state management library is used — pages use `StatefulWidget` with `setState`.
 - `AuthService` is a singleton exposed as a global `ValueNotifier<AuthService> authService` in `lib/services/auth_services.dart`. Access current user role via `authService.value.userMode` (`UserMode.admin` or `UserMode.user`).
 - Pages guard access by checking `userMode` in `initState` and redirecting to `/login` if null.
 
 ### Services Layer (`lib/services/`)
+
 - `db_service.dart` — exposes a global `db` (Firestore instance). All Firestore access goes through this.
 - `storage_service.dart` — exposes global `storage` and `storageRef` (Firebase Storage instance/ref).
 - `auth_services.dart` — Firebase Auth wrapper; user documents keyed by email in `users` collection.
@@ -39,6 +42,7 @@ All routes are defined in `lib/main.dart` using named routes (e.g. `/home`, `/lo
 - `constants.dart` — App name and `UserMode` enum.
 
 ### Firestore Collections
+
 - `users` — keyed by email, fields: `displayName`, `role` ("Admin"/"User"), `status` ("invited"/"active"), `phoneNumber`, `dateOfBirth`, `gender`, `qatarId`
 - `properties` — fields: `address`, `size`, `ownershipType`, `propertyType`, `furnishingType`, `usageType`, `currentContractId`, `currentCustomerId`, `createdAt`
 - `contracts` — fields: `customerId`, `propertyId`, `startDate`, `endDate`, `contractFileUrl`, `fileName`, `status` ("active"/"terminated"/"expired")
@@ -46,9 +50,11 @@ All routes are defined in `lib/main.dart` using named routes (e.g. `/home`, `/lo
 - `service_requests` — fields: `serviceType`, `date`, `notes`, `userId`
 
 ### UI Components (`lib/ui/`)
+
 Reusable widgets: `OutlineButton` (async-aware with loading state), `Dropdown`, `DateInput`, `FileInputButton`, `loading()`, snackbar helpers (`errorSnack`, `successSnack`, `warningSnack`, `infoSnack`).
 
 ### Models (`lib/utils/`)
+
 - `property.dart` — `Property` model with enums (`OwnershipType`, `PropertyType`, `FurnishingType`, `UsageType`) and parse/display helpers.
 - `utils.dart` — `isValidEmail` regex validator, debug-only `debugPrint`.
 
