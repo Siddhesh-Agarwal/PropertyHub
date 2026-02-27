@@ -51,6 +51,60 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final adminCards = [
+      const DashboardCard(
+        routeName: '/properties',
+        icon: Icons.house,
+        text: 'Manage Properties',
+        color: Colors.blue,
+      ),
+      const DashboardCard(
+        routeName: '/users',
+        icon: Icons.people,
+        text: 'Manage Users',
+        color: Colors.brown,
+      ),
+      const DashboardCard(
+        routeName: '/service',
+        icon: Icons.room_service,
+        text: 'Service Requests',
+        color: Colors.green,
+      ),
+      const DashboardCard(
+        routeName: '/admin/feedback',
+        icon: Icons.comment,
+        text: 'View Feedbacks',
+        color: Colors.deepOrange,
+      ),
+      const DashboardCard(
+        routeName: '/admin/sos',
+        icon: Icons.sos,
+        text: 'SOS Requests',
+        color: Colors.red,
+      ),
+    ];
+
+    final userCards = [
+      const DashboardCard(
+        routeName: "/contract",
+        icon: Icons.policy,
+        text: "View Contract",
+        color: Colors.purple,
+      ),
+      const DashboardCard(
+        routeName: '/service',
+        icon: Icons.room_service,
+        text: 'Service',
+        color: Colors.green,
+      ),
+      const DashboardCard(
+        routeName: '/feedback',
+        icon: Icons.comment,
+        text: 'Feedback',
+        color: Colors.deepOrange,
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(appName),
@@ -91,71 +145,22 @@ class _HomePageState extends State<HomePage> {
                         _errorMessage.isEmpty
                             ? [
                               Padding(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 24,
                                   vertical: 20,
                                 ),
                                 child: Text(
                                   'Welcome, ${name?.split(' ').first}!',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
-
                               if (userMode == UserMode.admin)
-                                DashboardCard(
-                                  routeName: '/properties',
-                                  icon: Icons.house,
-                                  text:
-                                      (userMode == UserMode.admin)
-                                          ? 'Manage Properties'
-                                          : 'Properties',
-                                  color: Colors.blue,
-                                ),
-                              if (userMode == UserMode.admin)
-                                DashboardCard(
-                                  routeName: '/users',
-                                  icon: Icons.people,
-                                  text: 'Manage Users',
-                                  color: Colors.brown,
-                                ),
-                              if (userMode == UserMode.user)
-                                DashboardCard(
-                                  routeName: "/contract",
-                                  icon: Icons.policy,
-                                  text: "View Contract",
-                                  color: Colors.purple,
-                                ),
-                              DashboardCard(
-                                routeName: '/service',
-                                icon: Icons.room_service,
-                                text:
-                                    (userMode == UserMode.admin)
-                                        ? 'Service Requests'
-                                        : 'Service',
-                                color: Colors.green,
-                              ),
-                              DashboardCard(
-                                routeName:
-                                    (userMode == UserMode.admin)
-                                        ? '/admin/feedback'
-                                        : '/feedback',
-                                icon: Icons.comment,
-                                text:
-                                    (userMode == UserMode.admin)
-                                        ? 'View Feedbacks'
-                                        : 'Feedback',
-                                color: Colors.deepOrange,
-                              ),
-                              if (userMode == UserMode.admin)
-                                DashboardCard(
-                                  routeName: '/admin/sos',
-                                  icon: Icons.sos,
-                                  text: 'SOS Requests',
-                                  color: Colors.red,
-                                ),
+                                ...adminCards
+                              else
+                                ...userCards,
                             ]
                             : [
                               ErrorView(
