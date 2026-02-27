@@ -47,9 +47,7 @@ class AdminFeedbackPage extends StatelessWidget {
               final data = doc.data();
               final timestamp =
                   (data['timestamp'] as Timestamp?)?.toDate() ?? DateTime.now();
-              final formattedTime = DateFormat(
-                'MMM d yyyy, hh:mm a',
-              ).format(timestamp);
+              final formattedTime = DateFormat('MMM d yyyy').format(timestamp);
               final email = doc.id;
               final double rating =
                   data['rating'] is int
@@ -61,15 +59,6 @@ class AdminFeedbackPage extends StatelessWidget {
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 24,
                   vertical: 12,
-                ),
-                leading: CircleAvatar(
-                  backgroundColor: _getRatingColor(rating).withOpacity(0.1),
-                  radius: 28,
-                  child: Icon(
-                    Icons.star,
-                    color: _getRatingColor(rating),
-                    size: 28,
-                  ),
                 ),
                 title: Row(
                   children: [
@@ -135,12 +124,6 @@ class AdminFeedbackPage extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Color _getRatingColor(double rating) {
-    if (rating >= 4) return Colors.green;
-    if (rating >= 3) return Colors.orange;
-    return Colors.red;
   }
 
   Widget _buildStars(double rating) {
